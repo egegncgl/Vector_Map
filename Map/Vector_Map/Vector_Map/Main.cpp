@@ -3,100 +3,98 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
+#define DEG2LAT 72.83811
+#define DEG2LON 54.13864
+#define LONOFSET 1294.23832784
+#define LATOFSET 3292.13689578
 using namespace std;
+
+typedef struct Polygon {
+    Vector2 *verticies;
+    int verticeCount;
+    int shape;
+}Polygon;
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
 int main(void)
 {
-
-	
-	SHPHandle h = SHPOpenSHPOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.shp", "rb");
-
-	if (h == nullptr)
-	{
-		cout << "Failed to open shp" << endl;
-		return -1;
-	}
-
+    
 	int nEntities = 0, nShapeType = 0;
-
-	SHPGetInfo(h, &nEntities, &nShapeType, nullptr, nullptr);
-
-	cout << nEntities << endl;
-	for (int i = 0; i < nEntities; i++)
-	{
-		SHPObject* obj = SHPReadObject(h, i);
-		if (obj == nullptr) continue;
-
-		int& shpType = obj->nSHPType; //Shape Type (SHPT_* - see list above)
-		int& shapeId = obj->nShapeId; //Shape Number (-1 is unknown/unassigned)
-
-		int& parts = obj->nParts; //# of Parts (0 implies single part with no info)
-		int* panPartStart = obj->panPartStart;  //Start Vertex of part
-		int* panPartType = obj->panPartType;   //Part Type (SHPP_RING if not SHPT_MULTIPATCH)
-		int& vertices = obj->nVertices; //Vertex list 
-
-		double& xMin = obj->dfXMin; //Bounds in X, Y, Z and M dimensions
-		double& yMin = obj->dfYMin;
-		double& zMin = obj->dfZMin;
-
-		double& xMax = obj->dfXMax;
-		double& yMax = obj->dfYMax;
-		double& zMax = obj->dfZMax;
-		cout << SHPTypeName(shpType) << "," << xMin << "," << xMax << "," << yMin << "," << yMax << endl;
-		cout << i << "," << vertices << "," << parts << endl;
-
-		std::vector<int> partStart, partType;
-		for (int k = 0; k < parts; k++)
-		{
-			partStart.push_back(panPartStart[k]);
-			partType.push_back(panPartType[k]);
-			//cout << panPartStart[k] << "," << SHPPartTypeName(panPartType[k]) << endl;
-		}
-
-		int part = -1;
-		for (int j = 0; j < vertices; j++)
-		{
-			if ((part + 1) < partStart.size() and partStart[part + 1] == j)
-				part++;
-			int pt = -1;
-			if (part >= 0)
-				pt = partType[part];
-			//cout << part << "," << obj->padfX[j] << "," << obj->padfY[j] << "," << obj->padfZ[j] << endl;
-			//cout << SHPPartTypeName(pt) << endl;
-		}
-
-		SHPDestroyObject(obj);
-	}
-
-	SHPClose(h);
-
 
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1280;
+    const int screenHeight = 908;
     float rotation = 0.0f;
     SHPHandle hSHP;
     DBFHandle hDBF;
     int numberOfEntities = 0;
     int numberOfShapeType = 0;
     int i = 0;
+    int j = 0;
     hSHP = SHPOpenSHPOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.shp","rb");
     hDBF = DBFOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.dbf","rb");
     if (hSHP == NULL || hDBF == NULL) {
         printf("ShapeFile veya DBF null\n");
     }
-
     SHPGetInfo(hSHP, &numberOfEntities, &numberOfShapeType, NULL, NULL);
+    Polygon *polygons= (Polygon*)malloc(numberOfEntities * sizeof(Polygon));
     printf("NumberOfEntities:%d\n", numberOfEntities);
     printf("NumberOfShapeType:%d\n", numberOfShapeType);
+    char fieldName[50];
+    int fieldWidth, fieldDecimals;
+    for (i = 0; i < numberOfEntities; i++) {
+        SHPObject* psShape = SHPReadObject(hSHP, i);
+        DBFFieldType fieldType = DBFGetFieldInfo(hDBF, i, fieldName, &fieldWidth, &fieldDecimals);
+        if (psShape == NULL) {
+            //printf("Shapefile Object cannot read. Index:%d\n");
+            continue;
+        }
+        printf("Alan %d: %s (Width:%d, Decimals:%d)\n", i, fieldName, fieldWidth, fieldDecimals);
+        Polygon p;
+        p.verticies = (Vector2*)malloc(psShape->nVertices * sizeof(Vector2));
+        p.verticeCount = psShape->nVertices;
+        p.shape = psShape->nSHPType;
+        //printf("EntityIndex:%d EntityNumberOfVerticies:%d\n", i, psShape->nVertices);
+        //printf("ShapeType:%d\n", psShape->nSHPType);
+
+        for (j = 0; j < psShape->nVertices; j++) {
+            //printf("Lon:%lf\tLat:%lf\tAltitude:%lf\n",psShape->padfX[j], psShape->padfY[j], psShape->padfZ[j]);
+            p.verticies[j].x = psShape->padfX[j];
+            p.verticies[j].y = psShape->padfY[j];
+            const char *fieldValue = DBFReadStringAttribute(hDBF, i, j);
+            if (fieldType == FTString) {
+                const char* fieldValue = DBFReadStringAttribute(hDBF, i, j);
+                printf("%s\n", fieldValue);
+            }
+            else if (fieldType == FTInteger) {
+                int fielValue = DBFReadIntegerAttribute(hDBF, i, j);
+                printf("%d\n", fieldValue);
+            }
+            else if (fieldType == FTDouble) {
+                double fieldValue = DBFReadDoubleAttribute(hDBF, i, j);
+                printf("%lf\n", fieldValue);
+            }
+            else {
+                printf("UnknownType\n");
+            }
+        }
+        polygons[i] = p;
+        SHPDestroyObject(psShape);
+    }
+    SHPClose(hSHP);
+    DBFClose(hDBF);
+
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - basic shapes drawing");
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    //SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
     // Main game loop
+    i = 0;
+    j = 0;
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update
@@ -106,9 +104,20 @@ int main(void)
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawText("some basic shapes available on raylib", 20, 20, 20, DARKGRAY);
-        DrawLine(18, 42, screenWidth - 18, 42, BLACK);
+        ClearBackground(BLACK);
+        for (i=0; i < numberOfEntities; i++) {
+            for (j=0; j < polygons[i].verticeCount; j++) {
+                if (j == polygons[i].verticeCount - 1) {
+                    DrawLine((polygons[i].verticies[j].x*DEG2LON)- LONOFSET, LATOFSET - polygons[i].verticies[j].y*DEG2LAT,
+                        (polygons[i].verticies[0].x * DEG2LON)-LONOFSET, LATOFSET - polygons[i].verticies[0].y * DEG2LAT, RED);
+                }
+                else {
+                    DrawLine((polygons[i].verticies[j].x * DEG2LON) - LONOFSET,LATOFSET- polygons[i].verticies[j].y * DEG2LAT,
+                        (polygons[i].verticies[j + 1].x * DEG2LON)-LONOFSET, LATOFSET - polygons[i].verticies[j].y * DEG2LAT, RED);
+                }
+            }
+        }
+        DrawFPS(100, 100);
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
