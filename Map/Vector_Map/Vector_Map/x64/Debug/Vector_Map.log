@@ -1,0 +1,7 @@
+﻿  Main.cpp
+C:\Users\DMAP\Desktop\Ege\VectorMap\Dependencies\shpEge\shapefil.h(377,1): warning C4005: 'REINTERPRET_CAST': macro redefinition
+  (compiling source file 'Main.cpp')
+  C:\Users\DMAP\Desktop\Ege\VectorMap\Dependencies\shpEge\shapefil.h(376,1):
+  see previous definition of 'REINTERPRET_CAST'
+  
+  Vector_Map.vcxproj -> C:\Users\DMAP\Desktop\Ege\VectorMap\Map\Vector_Map\Vector_Map\x64\Debug\Vector_Map.exe
