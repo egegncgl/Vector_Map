@@ -4,14 +4,16 @@ C:\Users\DMAP\Desktop\Ege\VectorMap\Dependencies\shpEge\shapefil.h(377,1): warni
   C:\Users\DMAP\Desktop\Ege\VectorMap\Dependencies\shpEge\shapefil.h(376,1):
   see previous definition of 'REINTERPRET_CAST'
   
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(66,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(67,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(112,83): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(112,63): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(111,87): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(111,66): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(116,87): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(116,67): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(115,88): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(115,69): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(66,16): warning C4566: character represented by universal-character-name '\u0131' cannot be represented in the current code page (1252)
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(83,24): warning C4476: 'printf' : unknown type field character 'U' in format specifier
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(106,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(107,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(138,83): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(138,63): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(137,87): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(137,66): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(142,87): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(142,67): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(141,88): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\Main.cpp(141,69): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   Vector_Map.vcxproj -> C:\Users\DMAP\Desktop\Ege\Vector_Map\Vector_Map\Vector_Map\Map\Vector_Map\Vector_Map\x64\Debug\Vector_Map.exe

@@ -1,4 +1,4 @@
-#include "raylib.h"
+﻿#include "raylib.h"
 #include "C:\\\\Users\\\\DMAP\\\\Desktop\\\\Ege\\\\VectorMap\\\\Dependencies\\\\shpEge\\\\shapefil.h"
 #include <string>
 #include <iostream>
@@ -35,8 +35,16 @@ int main(void)
     int numberOfShapeType = 0;
     int i = 0;
     int j = 0;
+    char fieldName[50];
+    int fieldWidth = 0;
+    int fieldDecimals = 0;
+    int numberOfFields = 0;
+    int numberOfRecords = 0;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  File Read
     hSHP = SHPOpenSHPOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.shp","rb");
     hDBF = DBFOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.dbf","rb");
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     if (hSHP == NULL || hDBF == NULL) {
         printf("ShapeFile veya DBF null\n");
     }
@@ -44,8 +52,41 @@ int main(void)
     Polygon *polygons= (Polygon*)malloc(numberOfEntities * sizeof(Polygon));
     printf("NumberOfEntities:%d\n", numberOfEntities);
     printf("NumberOfShapeType:%d\n", numberOfShapeType);
-    char fieldName[50];
-    int fieldWidth, fieldDecimals;
+
+    //------------------DBF PART--------------------
+    numberOfFields = DBFGetFieldCount(hDBF);
+    numberOfRecords = DBFGetRecordCount(hDBF);
+    for (i = 0; i < numberOfFields; i++) {
+        DBFFieldType fieldType= DBFGetFieldInfo(hDBF, i, fieldName, &fieldWidth, &fieldDecimals);
+        printf("Alan %d: %s (Width:%d, Decimals:%d)\n", i, fieldName, fieldWidth, fieldDecimals);
+        const char* fieldValue = DBFReadStringAttribute(hDBF, i, j);
+    }
+    printf("*************************************\n");
+    for (i = 0; i < numberOfRecords; i++) {
+        printf("kayıt%d:\n", i);
+        for (j = 0; j < numberOfFields; j++) {
+            DBFFieldType fieldType = DBFGetFieldInfo(hDBF, j, fieldName, &fieldWidth, &fieldDecimals);
+            printf("FieldName:%s\n", fieldName);
+            if (fieldType == FTString) {
+                const char* fieldValue = DBFReadStringAttribute(hDBF, i, j);
+                printf("%s\n", fieldValue);
+            }
+            if (fieldType == FTInteger) {
+                int fieldValue = DBFReadIntegerAttribute(hDBF, i, j);
+                printf("%d\n", fieldValue);
+            }
+            if (fieldType == FTDouble) {
+                double fieldValue = DBFReadDoubleAttribute(hDBF, i, j);
+                printf("%lf\n", fieldValue);
+            }
+            else {
+                printf("%Unknown\n");
+            }
+            printf("============\n");
+        }
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    //-------------------SHP PART--------------------
     for (i = 0; i < numberOfEntities; i++) {
         SHPObject* psShape = SHPReadObject(hSHP, i);
         DBFFieldType fieldType = DBFGetFieldInfo(hDBF, i, fieldName, &fieldWidth, &fieldDecimals);
@@ -53,7 +94,6 @@ int main(void)
             //printf("Shapefile Object cannot read. Index:%d\n");
             continue;
         }
-        printf("Alan %d: %s (Width:%d, Decimals:%d)\n", i, fieldName, fieldWidth, fieldDecimals);
         Polygon p;
         p.verticies = (Vector2*)malloc(psShape->nVertices * sizeof(Vector2));
         p.verticeCount = psShape->nVertices;
@@ -65,26 +105,12 @@ int main(void)
             //printf("Lon:%lf\tLat:%lf\tAltitude:%lf\n",psShape->padfX[j], psShape->padfY[j], psShape->padfZ[j]);
             p.verticies[j].x = psShape->padfX[j];
             p.verticies[j].y = psShape->padfY[j];
-            const char *fieldValue = DBFReadStringAttribute(hDBF, i, j);
-            if (fieldType == FTString) {
-                const char* fieldValue = DBFReadStringAttribute(hDBF, i, j);
-                printf("%s\n", fieldValue);
-            }
-            else if (fieldType == FTInteger) {
-                int fielValue = DBFReadIntegerAttribute(hDBF, i, j);
-                printf("%d\n", fieldValue);
-            }
-            else if (fieldType == FTDouble) {
-                double fieldValue = DBFReadDoubleAttribute(hDBF, i, j);
-                printf("%lf\n", fieldValue);
-            }
-            else {
-                printf("UnknownType\n");
-            }
         }
         polygons[i] = p;
         SHPDestroyObject(psShape);
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
     SHPClose(hSHP);
     DBFClose(hDBF);
 
