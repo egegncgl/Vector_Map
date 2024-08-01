@@ -29,98 +29,12 @@ int main(void)
     const int screenWidth = 1280;
     const int screenHeight = 908;
     float rotation = 0.0f;
-    SHPHandle hSHP;
-    DBFHandle hDBF;
-    int numberOfEntities = 0;
-    int numberOfShapeType = 0;
-    int i = 0;
-    int j = 0;
-    char fieldName[50];
-    int fieldWidth = 0;
-    int fieldDecimals = 0;
-    int numberOfFields = 0;
-    int numberOfRecords = 0;
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    //  File Read
-    hSHP = SHPOpenSHPOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.shp","rb");
-    hDBF = DBFOpen("C:\\Users\\DMAP\\Desktop\\Ege\\VectorMap\\Data\\turkey-latest-free.shp\\gis_osm_landuse_a_free_1.dbf","rb");
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (hSHP == NULL || hDBF == NULL) {
-        printf("ShapeFile veya DBF null\n");
-    }
-    SHPGetInfo(hSHP, &numberOfEntities, &numberOfShapeType, NULL, NULL);
-    Polygon *polygons= (Polygon*)malloc(numberOfEntities * sizeof(Polygon));
-    printf("NumberOfEntities:%d\n", numberOfEntities);
-    printf("NumberOfShapeType:%d\n", numberOfShapeType);
 
-    //------------------DBF PART--------------------
-    numberOfFields = DBFGetFieldCount(hDBF);
-    numberOfRecords = DBFGetRecordCount(hDBF);
-    for (i = 0; i < numberOfFields; i++) {
-        DBFFieldType fieldType= DBFGetFieldInfo(hDBF, i, fieldName, &fieldWidth, &fieldDecimals);
-        printf("Alan %d: %s (Width:%d, Decimals:%d)\n", i, fieldName, fieldWidth, fieldDecimals);
-        const char* fieldValue = DBFReadStringAttribute(hDBF, i, j);
-    }
-    printf("*************************************\n");
-    for (i = 0; i < numberOfRecords; i++) {
-        printf("kayıt%d:\n", i);
-        for (j = 0; j < numberOfFields; j++) {
-            DBFFieldType fieldType = DBFGetFieldInfo(hDBF, j, fieldName, &fieldWidth, &fieldDecimals);
-            printf("FieldName:%s\n", fieldName);
-            if (fieldType == FTString) {
-                const char* fieldValue = DBFReadStringAttribute(hDBF, i, j);
-                printf("%s\n", fieldValue);
-            }
-            if (fieldType == FTInteger) {
-                int fieldValue = DBFReadIntegerAttribute(hDBF, i, j);
-                printf("%d\n", fieldValue);
-            }
-            if (fieldType == FTDouble) {
-                double fieldValue = DBFReadDoubleAttribute(hDBF, i, j);
-                printf("%lf\n", fieldValue);
-            }
-            else {
-                printf("%Unknown\n");
-            }
-            printf("============\n");
-        }
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    //-------------------SHP PART--------------------
-    for (i = 0; i < numberOfEntities; i++) {
-        SHPObject* psShape = SHPReadObject(hSHP, i);
-        DBFFieldType fieldType = DBFGetFieldInfo(hDBF, i, fieldName, &fieldWidth, &fieldDecimals);
-        if (psShape == NULL) {
-            //printf("Shapefile Object cannot read. Index:%d\n");
-            continue;
-        }
-        Polygon p;
-        p.verticies = (Vector2*)malloc(psShape->nVertices * sizeof(Vector2));
-        p.verticeCount = psShape->nVertices;
-        p.shape = psShape->nSHPType;
-        //printf("EntityIndex:%d EntityNumberOfVerticies:%d\n", i, psShape->nVertices);
-        //printf("ShapeType:%d\n", psShape->nSHPType);
-
-        for (j = 0; j < psShape->nVertices; j++) {
-            //printf("Lon:%lf\tLat:%lf\tAltitude:%lf\n",psShape->padfX[j], psShape->padfY[j], psShape->padfZ[j]);
-            p.verticies[j].x = psShape->padfX[j];
-            p.verticies[j].y = psShape->padfY[j];
-        }
-        polygons[i] = p;
-        SHPDestroyObject(psShape);
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-
-    SHPClose(hSHP);
-    DBFClose(hDBF);
 
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - basic shapes drawing");
     //SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
-    // Main game loop
-    i = 0;
-    j = 0;
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update
@@ -131,18 +45,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
         ClearBackground(BLACK);
-        for (i=0; i < numberOfEntities; i++) {
-            for (j=0; j < polygons[i].verticeCount; j++) {
-                if (j == polygons[i].verticeCount - 1) {
-                    DrawLine((polygons[i].verticies[j].x*DEG2LON)- LONOFSET, LATOFSET - polygons[i].verticies[j].y*DEG2LAT,
-                        (polygons[i].verticies[0].x * DEG2LON)-LONOFSET, LATOFSET - polygons[i].verticies[0].y * DEG2LAT, RED);
-                }
-                else {
-                    DrawLine((polygons[i].verticies[j].x * DEG2LON) - LONOFSET,LATOFSET- polygons[i].verticies[j].y * DEG2LAT,
-                        (polygons[i].verticies[j + 1].x * DEG2LON)-LONOFSET, LATOFSET - polygons[i].verticies[j].y * DEG2LAT, RED);
-                }
-            }
-        }
+        //Draw
         DrawFPS(100, 100);
         EndDrawing();
         //----------------------------------------------------------------------------------
